@@ -1,29 +1,20 @@
 import React from 'react';
 import TextField from './TextField'
-import Select from './Select'
 
 class ReviewForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      starOptions: ["★","★★","★★★","★★★★","★★★★★"],
       errors: [],
       nameEntry: "",
-      starSelected: "",
-      textEntry: ""
+      photoEntry: "",
+      locationEntry: "",
+      restaurant_id: this.props.restaurant_id
     }
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
-  }
-
-  handleClearForm(event) {
-    event.preventDefault();
-    this.setState({
-      errors: [],
-      nameEntry: "",
-      starSelected: "",
-      textEntry: ""
-    })
+    this.handleNameChange = this.handleNameChange.bind(this);
+    this.handlePhotoChange = this.handlePhotoChange.bind(this);
+    this.handleLocationChange = this.handleLocationChange.bind(this);
   }
 
   handleFormSubmit(event) {
@@ -36,15 +27,24 @@ class ReviewForm extends React.Component {
         name: this.state.nameEntry,
         content: this.state.textEntry,
         rating: this.state.starSelected.length*20,
+        restaurant_id: this.state.restaurant_id
       };
       this.props.reviewSubmit(formPayload);
-      this.handleClearForm(event)
+      console.log(formPayload);
     }
   }
 
-  handleInputChange(event) {
-    let name = event.target.name
-    this.setState({ [name]: event.target.value })
+  handleNameChange(event) {
+    this.validateNameChange(event.target.value)
+    this.setState({ nameEntry: event.target.value })
+  }
+
+  handlePhotoChange(event) {
+    this.setState({ photoEntry: event.target.value })
+  }
+
+  handleLocationChange(event) {
+    this.setState({ locationEntry: event.target.value })
   }
 
   validateNameChange(name) {
@@ -85,32 +85,30 @@ class ReviewForm extends React.Component {
 
     return (
       <form onSubmit={this.handleFormSubmit}>
-      <h3>Add A Review</h3>
         {errorDiv}
         <TextField
-          name="nameEntry"
+          name="name"
           label="Name"
-          className="small-10 columns"
-          handlerFunction={this.handleInputChange}
-          content={this.state.nameEntry}
-        />
-        <Select
-          name='starSelected'
-          label='Stars'
-          className="small-2 columns"
-          handlerFunction={this.handleInputChange}
-          options={this.state.starOptions}
-          selectedOption={this.state.starSelected}
+          className="small-7 columns"
+          handlerFunction={this.handleNameChange}
+          content={this.nameEntry}
         />
         <TextField
-          name="textEntry"
-          className="small-12 columns"
-          label="Review Text"
-          handlerFunction={this.handleInputChange}
+          name="photo"
+          className="small-5 columns"
+          label="Add a Photo"
+          handlerFunction={this.handleTextChange}
           content={this.state.textEntry}
         />
-        <br/>
-        <div className="button-group small-12 columns">
+        <TextField
+          name="location"
+          className="small-12 columns"
+          label="Review Text"
+          handlerFunction={this.handleTextChange}
+          content={this.state.textEntry}
+        />
+
+        <div className="button-group">
           <input className="button" type="submit" value="Submit" />
         </div>
       </form>
